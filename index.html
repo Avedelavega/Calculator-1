@@ -36,11 +36,31 @@
       border-collapse: separate;
       border-spacing: 0 12px;
       width: 100%;
+      table-layout: fixed;
     }
 
-    td {
+    thead th {
+      padding: 10px 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #555;
+      border-bottom: 2px solid #ccc;
+      text-align: center;
+      background-color: #fafafa;
+    }
+
+    tbody td {
       vertical-align: middle;
       padding: 0 8px;
+    }
+
+    tbody tr:last-child td {
+      padding-top: 14px;
+    }
+
+    /* Equal width columns */
+    table tr > * {
+      width: 33.33%;
     }
 
     input[type="number"] {
@@ -98,6 +118,13 @@
   <div class="calculator">
     <h2>Discount Calculator</h2>
     <table>
+      <thead>
+        <tr>
+          <th>Price</th>
+          <th>Discount (%)</th>
+          <th>Discounted Price</th>
+        </tr>
+      </thead>
       <tbody>
         <!-- Row 1 -->
         <tr>
