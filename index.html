@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Discount Calculator</title>
+  <title>Discount Calculator with Users</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,7 +21,7 @@
       padding: 30px 40px;
       border-radius: 12px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      max-width: 460px;
+      max-width: 700px;
       width: 100%;
     }
 
@@ -47,6 +47,7 @@
       border-bottom: 2px solid #ccc;
       text-align: center;
       background-color: #fafafa;
+      word-wrap: break-word;
     }
 
     tbody td {
@@ -58,9 +59,9 @@
       padding-top: 14px;
     }
 
-    /* Equal width columns */
+    /* Equal width columns (5 columns now) */
     table tr > * {
-      width: 33.33%;
+      width: 20%;
     }
 
     input[type="number"] {
@@ -116,13 +117,15 @@
 <body>
 
   <div class="calculator">
-    <h2>Discount Calculator</h2>
+    <h2>Discount Calculator with Users</h2>
     <table>
       <thead>
         <tr>
           <th>Price</th>
           <th>Discount (%)</th>
           <th>Discounted Price</th>
+          <th>Users</th>
+          <th>Total per Row</th>
         </tr>
       </thead>
       <tbody>
@@ -131,6 +134,8 @@
           <td><input type="number" id="price0" placeholder="Enter price" min="0" /></td>
           <td><input type="number" id="discount0" placeholder="Discount %" min="0" max="100" /></td>
           <td><input type="number" id="result0" readonly /></td>
+          <td><input type="number" id="users0" placeholder="Users" min="0" /></td>
+          <td><input type="number" id="totalRow0" readonly /></td>
         </tr>
 
         <!-- Row 2 -->
@@ -138,6 +143,8 @@
           <td><input type="number" value="60" readonly /></td>
           <td><input type="number" id="discount1" placeholder="Discount %" min="0" max="100" /></td>
           <td><input type="number" id="result1" readonly /></td>
+          <td><input type="number" id="users1" placeholder="Users" min="0" /></td>
+          <td><input type="number" id="totalRow1" readonly /></td>
         </tr>
 
         <!-- Row 3 -->
@@ -145,6 +152,8 @@
           <td><input type="number" value="30" readonly /></td>
           <td><input type="number" id="discount2" placeholder="Discount %" min="0" max="100" /></td>
           <td><input type="number" id="result2" readonly /></td>
+          <td><input type="number" id="users2" placeholder="Users" min="0" /></td>
+          <td><input type="number" id="totalRow2" readonly /></td>
         </tr>
 
         <!-- Row 4 -->
@@ -152,13 +161,17 @@
           <td><input type="number" value="39" readonly /></td>
           <td><input type="number" id="discount3" placeholder="Discount %" min="0" max="100" /></td>
           <td><input type="number" id="result3" readonly /></td>
+          <td><input type="number" id="users3" placeholder="Users" min="0" /></td>
+          <td><input type="number" id="totalRow3" readonly /></td>
         </tr>
 
         <!-- Row 5 - Total -->
         <tr>
           <td class="black-bg"><input type="text" readonly /></td>
           <td class="yellow-bg">Total</td>
-          <td><input type="number" id="total" readonly /></td>
+          <td class="yellow-bg"></td>
+          <td class="yellow-bg"></td>
+          <td><input type="number" id="grandTotal" readonly /></td>
         </tr>
       </tbody>
     </table>
@@ -174,36 +187,28 @@
     }
 
     function updateResults() {
-      const price0 = document.getElementById('price0').value;
-      const discount0 = document.getElementById('discount0').value;
-      document.getElementById('result0').value = calcDiscount(price0, discount0);
+      // For each row 0 to 3
+      let grandTotalSum = 0;
+      for(let i = 0; i <= 3; i++) {
+        const price = (i === 0) ? document.getElementById('price0').value : 
+                      (i === 1 ? 60 : (i === 2 ? 30 : 39));
+        const discount = document.getElementById(`discount${i}`).value;
+        const discountedPrice = calcDiscount(price, discount);
+        document.getElementById(`result${i}`).value = discountedPrice;
 
-      const price1 = 60;
-      const discount1 = document.getElementById('discount1').value;
-      document.getElementById('result1').value = calcDiscount(price1, discount1);
+        const usersVal = document.getElementById(`users${i}`).value;
+        const users = usersVal === '' ? 0 : parseInt(usersVal, 10);
+        const totalPerRow = (discountedPrice !== '' && !isNaN(users)) ? +(discountedPrice * users).toFixed(2) : '';
+        document.getElementById(`totalRow${i}`).value = totalPerRow;
 
-      const price2 = 30;
-      const discount2 = document.getElementById('discount2').value;
-      document.getElementById('result2').value = calcDiscount(price2, discount2);
-
-      const price3 = 39;
-      const discount3 = document.getElementById('discount3').value;
-      document.getElementById('result3').value = calcDiscount(price3, discount3);
-
-      const results = [
-        document.getElementById('result0').value,
-        document.getElementById('result1').value,
-        document.getElementById('result2').value,
-        document.getElementById('result3').value,
-      ];
-      const total = results.reduce((sum, val) => {
-        const num = parseFloat(val);
-        return sum + (isNaN(num) ? 0 : num);
-      }, 0);
-      document.getElementById('total').value = total.toFixed(2);
+        grandTotalSum += (totalPerRow === '' ? 0 : totalPerRow);
+      }
+      document.getElementById('grandTotal').value = grandTotalSum.toFixed(2);
     }
 
-    ['price0', 'discount0', 'discount1', 'discount2', 'discount3'].forEach(id => {
+    // Add event listeners to inputs that affect calculations
+    ['price0', 'discount0', 'discount1', 'discount2', 'discount3', 
+     'users0', 'users1', 'users2', 'users3'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateResults);
     });
 
