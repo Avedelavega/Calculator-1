@@ -5,66 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Discount Calculator</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-  }
   table {
     border-collapse: collapse;
-    width: 500px;
-    margin: 0 auto;
+    width: 100%;        /* full container width */
+    table-layout: fixed; /* equal width columns */
   }
-  th, td {
-    border: 1px solid #ccc;
-    padding: 12px;
-    width: 33.33%; /* equal width for all columns */
+  td, th {
+    border: 1px solid #999;
+    padding: 8px;
     text-align: center;
+    width: 25%;          /* equal widths for 4 columns */
+    overflow-wrap: break-word;
   }
   input[type="number"] {
-    width: 90%;
-    padding: 8px;
-    font-size: 1rem;
+    width: 80px;
+    padding: 4px;
     box-sizing: border-box;
   }
-  input[readonly] {
-    background-color: #f0f0f0;
+  .black-bg {
+    background-color: black;
+  }
+  .yellow-bg {
+    background-color: yellow;
+  }
+  .readonly-cell {
+    background-color: #eee;
   }
 </style>
 </head>
 <body>
 
 <table>
-  <thead>
-    <tr>
-      <th>Price</th>
-      <th>Discount %</th>
-      <th>Discounted Price</th>
-    </tr>
-  </thead>
   <tbody>
+    <!-- Row 1 -->
     <tr>
-      <td><input type="number" id="price" placeholder="Enter price" min="0" step="0.01" /></td>
-      <td><input type="number" id="discount" placeholder="Enter discount %" min="0" max="100" step="0.01" /></td>
-      <td><input type="number" id="discountedPrice" readonly placeholder="Result" /></td>
+      <td><input type="number" id="price1" min="0" step="any" placeholder="Price" oninput="calculateRow(1)" /></td>
+      <td><input type="number" id="discount1" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(1)" /></td>
+      <td><input type="number" id="result1" readonly class="readonly-cell" /></td>
+      <td></td>
+    </tr>
+
+    <!-- Row 2 -->
+    <tr>
+      <td><input type="number" value="60" readonly class="readonly-cell" /></td>
+      <td><input type="number" id="discount2" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(2)" /></td>
+      <td><input type="number" id="result2" readonly class="readonly-cell" /></td>
+      <td></td>
+    </tr>
+
+    <!-- Row 3 -->
+    <tr>
+      <td><input type="number" value="30" readonly class="readonly-cell" /></td>
+      <td><input type="number" id="discount3" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(3)" /></td>
+      <td><input type="number" id="result3" readonly class="readonly-cell" /></td>
+      <td></td>
+    </tr>
+
+    <!-- Row 4 -->
+    <tr>
+      <td><input type="number" value="39" readonly class="readonly-cell" /></td>
+      <td><input type="number" id="discount4" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(4)" /></td>
+      <td><input type="number" id="result4" readonly class="readonly-cell" /></td>
+      <td></td>
+    </tr>
+
+    <!-- Row 5 -->
+    <tr>
+      <td class="black-bg"></td>
+      <td class="yellow-bg"><strong>Total</strong></td>
+      <td><input type="number" id="total" readonly class="readonly-cell" /></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
 
 <script>
-  const priceInput = document.getElementById('price');
-  const discountInput = document.getElementById('discount');
-  const discountedPriceInput = document.getElementById('discountedPrice');
-
-  function calculateDiscountedPrice() {
-    const price = parseFloat(priceInput.value) || 0;
-    const discountPercent = parseFloat(discountInput.value) || 0;
-
-    const discountedPrice = price * (1 - discountPercent / 100);
-    discountedPriceInput.value = discountedPrice.toFixed(2);
+function calculateRow(row) {
+  let priceInput;
+  if (row === 1) {
+    priceInput = document.getElementById('price1').value;
+  } else {
+    priceInput = document.querySelector(`table tbody tr:nth-child(${row}) td:first-child input`).value;
   }
+  const price = parseFloat(priceInput) || 0;
 
-  priceInput.addEventListener('input', calculateDiscountedPrice);
-  discountInput.addEventListener('input', calculateDiscountedPrice);
+  const discountInput = document.getElementById(`discount${row}`).value;
+  const discount = parseFloat(discountInput) || 0;
+
+  let discountedPrice = price * (1 - discount / 100);
+  discountedPrice = discountedPrice < 0 ? 0 : discountedPrice;
+
+  document.getElementById(`result${row}`).value = discountedPrice.toFixed(2);
+
+  calculateTotal();
+}
+
+function calculateTotal() {
+  let total = 0;
+  for (let i = 1; i <= 4; i++) {
+    const val = parseFloat(document.getElementById(`result${i}`).value) || 0;
+    total += val;
+  }
+  document.getElementById('total').value = total.toFixed(2);
+}
+
+window.onload = () => {
+  for (let i = 2; i <= 4; i++) {
+    calculateRow(i);
+  }
+};
 </script>
 
 </body>
