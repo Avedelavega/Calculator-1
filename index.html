@@ -1,171 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Discount Calculator</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    display: flex;
-    justify-content: center;
-    padding: 40px 0;
-  }
-  table {
-    border-collapse: separate;
-    border-spacing: 0 8px;
-    width: 480px;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-    background: white;
-    border-radius: 8px;
-  }
-  thead th {
-    background-color: #007acc;
-    color: white;
-    padding: 12px 0;
-    font-weight: 600;
-    font-size: 1.1em;
-    text-align: center;
-    border-radius: 8px 8px 0 0;
-  }
-  tbody tr {
-    background: #e9eff5;
-    border-radius: 6px;
-  }
-  tbody tr:last-child {
-    background: transparent;
-  }
-  td {
-    text-align: center;
-    padding: 12px 0;
-    font-size: 1em;
-  }
-  input[type="number"] {
-    width: 120px;
-    padding: 8px 12px;
-    font-size: 1em;
-    border-radius: 4px;
-    border: 1.5px solid #ccc;
-    text-align: center;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
-  }
-  input[type="number"]:focus {
-    outline: none;
-    border-color: #007acc;
-    box-shadow: 0 0 5px #007acc;
-  }
-  input[readonly] {
-    background-color: #d9d9d9;
-    border-color: #aaa;
-    color: #555;
-    cursor: default;
-  }
-  .black-bg {
-    background-color: #000;
-    border-radius: 6px 0 0 0;
-  }
-  .yellow-bg {
-    background-color: #ffde59;
-    font-weight: 700;
-    font-size: 1.1em;
-    border-radius: 0 6px 0 0;
-  }
-  .total-row td {
-    background: transparent !important;
-    padding-top: 16px;
-  }
-  /* Remove border radius on tbody rows except first */
-  tbody tr:not(:first-child) td {
-    border-radius: 0;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discount Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .calculator {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      max-width: 460px;
+      width: 100%;
+    }
+
+    .calculator h2 {
+      margin-bottom: 24px;
+      font-weight: 700;
+      color: #333;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      width: 100%;
+    }
+
+    td {
+      vertical-align: middle;
+      padding: 0 8px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1.1rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+      text-align: center;
+      font-weight: 600;
+      color: #444;
+      background-color: #fafafa;
+    }
+
+    input[type="number"]:focus {
+      border-color: #3f51b5;
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
+    }
+
+    input[readonly] {
+      background-color: #e0e0e0;
+      border-color: #bbb;
+      cursor: default;
+      color: #333;
+      font-weight: 700;
+    }
+
+    /* Special styles */
+    .black-bg input[readonly] {
+      background-color: #111;
+      color: #fff;
+      border-color: #111;
+      cursor: default;
+    }
+
+    .yellow-bg {
+      background-color: #ffeb3b;
+      font-weight: 700;
+      font-size: 1.15rem;
+      border-radius: 6px;
+      text-align: center;
+      user-select: none;
+      padding: 10px 0;
+      color: #444;
+    }
+
+  </style>
 </head>
 <body>
 
-<table>
-  <thead>
-    <tr>
-      <th>Price</th>
-      <th>Discount %</th>
-      <th>Discounted Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Row 1 -->
-    <tr>
-      <td><input type="number" id="price1" min="0" step="any" placeholder="Enter price" oninput="calculateRow(1)" /></td>
-      <td><input type="number" id="discount1" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(1)" /></td>
-      <td><input type="number" id="result1" readonly /></td>
-    </tr>
+  <div class="calculator">
+    <h2>Discount Calculator</h2>
+    <table>
+      <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td><input type="number" id="price0" placeholder="Enter price" min="0" /></td>
+          <td><input type="number" id="discount0" placeholder="Discount %" min="0" max="100" /></td>
+          <td><input type="number" id="result0" readonly /></td>
+        </tr>
 
-    <!-- Row 2 -->
-    <tr>
-      <td><input type="number" value="60" readonly /></td>
-      <td><input type="number" id="discount2" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(2)" /></td>
-      <td><input type="number" id="result2" readonly /></td>
-    </tr>
+        <!-- Row 2 -->
+        <tr>
+          <td><input type="number" value="60" readonly /></td>
+          <td><input type="number" id="discount1" placeholder="Discount %" min="0" max="100" /></td>
+          <td><input type="number" id="result1" readonly /></td>
+        </tr>
 
-    <!-- Row 3 -->
-    <tr>
-      <td><input type="number" value="30" readonly /></td>
-      <td><input type="number" id="discount3" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(3)" /></td>
-      <td><input type="number" id="result3" readonly /></td>
-    </tr>
+        <!-- Row 3 -->
+        <tr>
+          <td><input type="number" value="30" readonly /></td>
+          <td><input type="number" id="discount2" placeholder="Discount %" min="0" max="100" /></td>
+          <td><input type="number" id="result2" readonly /></td>
+        </tr>
 
-    <!-- Row 4 -->
-    <tr>
-      <td><input type="number" value="39" readonly /></td>
-      <td><input type="number" id="discount4" min="0" max="100" step="any" placeholder="%" oninput="calculateRow(4)" /></td>
-      <td><input type="number" id="result4" readonly /></td>
-    </tr>
+        <!-- Row 4 -->
+        <tr>
+          <td><input type="number" value="39" readonly /></td>
+          <td><input type="number" id="discount3" placeholder="Discount %" min="0" max="100" /></td>
+          <td><input type="number" id="result3" readonly /></td>
+        </tr>
 
-    <!-- Row 5 (Total) -->
-    <tr class="total-row">
-      <td class="black-bg"></td>
-      <td class="yellow-bg">Total</td>
-      <td><input type="number" id="total" readonly /></td>
-    </tr>
-  </tbody>
-</table>
+        <!-- Row 5 - Total -->
+        <tr>
+          <td class="black-bg"><input type="text" readonly /></td>
+          <td class="yellow-bg">Total</td>
+          <td><input type="number" id="total" readonly /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<script>
-function calculateRow(row) {
-  let priceInput;
-  if (row === 1) {
-    priceInput = document.getElementById('price1').value;
-  } else {
-    priceInput = document.querySelector(`table tbody tr:nth-child(${row + 1}) td:first-child input`).value;
-  }
-  const price = parseFloat(priceInput) || 0;
+  <script>
+    function calcDiscount(price, discount) {
+      if (price === '' || discount === '') return '';
+      const p = parseFloat(price);
+      const d = parseFloat(discount);
+      if (isNaN(p) || isNaN(d)) return '';
+      return +(p * (1 - d / 100)).toFixed(2);
+    }
 
-  const discountInput = document.getElementById(`discount${row}`).value;
-  const discount = parseFloat(discountInput) || 0;
+    function updateResults() {
+      const price0 = document.getElementById('price0').value;
+      const discount0 = document.getElementById('discount0').value;
+      document.getElementById('result0').value = calcDiscount(price0, discount0);
 
-  let discountedPrice = price * (1 - discount / 100);
-  discountedPrice = discountedPrice < 0 ? 0 : discountedPrice;
+      const price1 = 60;
+      const discount1 = document.getElementById('discount1').value;
+      document.getElementById('result1').value = calcDiscount(price1, discount1);
 
-  document.getElementById(`result${row}`).value = discountedPrice.toFixed(2);
+      const price2 = 30;
+      const discount2 = document.getElementById('discount2').value;
+      document.getElementById('result2').value = calcDiscount(price2, discount2);
 
-  calculateTotal();
-}
+      const price3 = 39;
+      const discount3 = document.getElementById('discount3').value;
+      document.getElementById('result3').value = calcDiscount(price3, discount3);
 
-function calculateTotal() {
-  let total = 0;
-  for (let i = 1; i <= 4; i++) {
-    const val = parseFloat(document.getElementById(`result${i}`).value) || 0;
-    total += val;
-  }
-  document.getElementById('total').value = total.toFixed(2);
-}
+      const results = [
+        document.getElementById('result0').value,
+        document.getElementById('result1').value,
+        document.getElementById('result2').value,
+        document.getElementById('result3').value,
+      ];
+      const total = results.reduce((sum, val) => {
+        const num = parseFloat(val);
+        return sum + (isNaN(num) ? 0 : num);
+      }, 0);
+      document.getElementById('total').value = total.toFixed(2);
+    }
 
-window.onload = () => {
-  for (let i = 2; i <= 4; i++) {
-    calculateRow(i);
-  }
-};
-</script>
+    ['price0', 'discount0', 'discount1', 'discount2', 'discount3'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateResults);
+    });
 
+    updateResults();
+  </script>
 </body>
 </html>
