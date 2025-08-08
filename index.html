@@ -1,261 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Discount Calculator with Users & Minutes</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f7fa;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
-      min-height: 100vh;
-      margin: 0;
-    }
+<!-- Just the modified parts -->
 
-    .calculator {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      max-width: 700px;
-      width: 100%;
-    }
+<thead>
+  <tr>
+    <th>Price</th>
+    <th>Discount (%)</th>
+    <th>Discounted Price</th>
+    <th id="usersOrMinutesHeader">Users / Minutes</th>
+    <th>Total per Row</th>
+  </tr>
+</thead>
+<tbody>
+  <!-- ... rows above unchanged ... -->
+  <tr>
+    <td class="black-bg"><input type="text" readonly /></td>
+    <td class="yellow-bg">Total</td>
+    <td class="yellow-bg"><input type="number" id="discountedPriceTotal" readonly /></td>
+    <td class="yellow-bg"></td>
+    <td><input type="number" id="grandTotal" readonly /></td>
+  </tr>
+</tbody>
 
-    .calculator h2 {
-      margin-bottom: 24px;
-      font-weight: 700;
-      color: #333;
-      text-align: center;
-    }
+<script>
+  function updateResults() {
+    let grandTotalSum = 0;
+    let discountedPriceSum = 0;
+    for(let i = 0; i <= 3; i++) {
+      const price = (i === 0) ? document.getElementById('price0').value : 
+                    (i === 1 ? 60 : (i === 2 ? 30 : 39));
+      const discount = document.getElementById(`discount${i}`).value;
+      const discountedPrice = calcDiscount(price, discount);
+      document.getElementById(`result${i}`).value = discountedPrice;
 
-    table {
-      border-collapse: separate;
-      border-spacing: 0 12px;
-      width: 100%;
-      table-layout: fixed;
-    }
+      // accumulate discounted prices if valid
+      discountedPriceSum += (discountedPrice === '' || isNaN(discountedPrice)) ? 0 : parseFloat(discountedPrice);
 
-    thead th {
-      padding: 10px 8px;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #555;
-      border-bottom: 2px solid #ccc;
-      text-align: center;
-      background-color: #fafafa;
-      word-wrap: break-word;
-    }
-
-    tbody td {
-      vertical-align: middle;
-      padding: 0 8px;
-    }
-
-    tbody tr:last-child td {
-      padding-top: 14px;
-    }
-
-    /* Equal width columns (5 columns now) */
-    table tr > * {
-      width: 20%;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 1.1rem;
-      border: 2px solid #ddd;
-      border-radius: 6px;
-      transition: border-color 0.2s ease;
-      box-sizing: border-box;
-      text-align: center;
-      font-weight: 600;
-      color: #444;
-      background-color: #fafafa;
-    }
-
-    input[type="number"]:focus {
-      border-color: #3f51b5;
-      outline: none;
-      background-color: #fff;
-      box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
-    }
-
-    input[readonly] {
-      background-color: #e0e0e0;
-      border-color: #bbb;
-      cursor: default;
-      color: #333;
-      font-weight: 700;
-    }
-
-    /* Special styles */
-    .black-bg input[readonly] {
-      background-color: #111;
-      color: #fff;
-      border-color: #111;
-      cursor: default;
-    }
-
-    .yellow-bg {
-      background-color: #ffeb3b;
-      font-weight: 700;
-      font-size: 1.15rem;
-      border-radius: 6px;
-      text-align: center;
-      user-select: none;
-      padding: 10px 0;
-      color: #444;
-    }
-
-  </style>
-</head>
-<body>
-
-  <div class="calculator">
-    <h2>Discount Calculator with Users & Minutes</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Price</th>
-          <th>Discount (%)</th>
-          <th>Discounted Price</th>
-          <th>Users</th>
-          <th>Total per Row</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Row 1 -->
-        <tr>
-          <td><input type="number" id="price0" placeholder="Enter price" min="0" /></td>
-          <td><input type="number" id="discount0" placeholder="Discount %" min="0" max="100" /></td>
-          <td><input type="number" id="result0" readonly /></td>
-          <td><input type="number" id="users0" placeholder="Users" min="0" /></td>
-          <td><input type="number" id="totalRow0" readonly /></td>
-        </tr>
-
-        <!-- Row 2 -->
-        <tr>
-          <td><input type="number" value="60" readonly /></td>
-          <td><input type="number" id="discount1" placeholder="Discount %" min="0" max="100" /></td>
-          <td><input type="number" id="result1" readonly /></td>
-          <td><input type="number" id="users1" placeholder="Users" min="0" /></td>
-          <td><input type="number" id="totalRow1" readonly /></td>
-        </tr>
-
-        <!-- Row 3 -->
-        <tr>
-          <td><input type="number" value="30" readonly /></td>
-          <td><input type="number" id="discount2" placeholder="Discount %" min="0" max="100" /></td>
-          <td><input type="number" id="result2" readonly /></td>
-          <td><input type="number" id="users2" placeholder="Users" min="0" /></td>
-          <td><input type="number" id="totalRow2" readonly /></td>
-        </tr>
-
-        <!-- Row 4 with Minutes instead of Users -->
-        <tr>
-          <td><input type="number" value="39" readonly /></td>
-          <td><input type="number" id="discount3" placeholder="Discount %" min="0" max="100" /></td>
-          <td><input type="number" id="result3" readonly /></td>
-          <td><input type="number" id="minutes3" placeholder="Minutes" min="0" /></td>
-          <td><input type="number" id="totalRow3" readonly /></td>
-        </tr>
-
-        <!-- Row 5 - Total -->
-        <tr>
-          <td class="black-bg"><input type="text" readonly /></td>
-          <td class="yellow-bg">Total</td>
-          <td class="yellow-bg"></td>
-          <td class="yellow-bg"></td>
-          <td><input type="number" id="grandTotal" readonly /></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <script>
-    function calcDiscount(price, discount) {
-      if (price === '' || discount === '') return '';
-      const p = parseFloat(price);
-      const d = parseFloat(discount);
-      if (isNaN(p) || isNaN(d)) return '';
-      return +(p * (1 - d / 100)).toFixed(2);
-    }
-
-    function calcMinutesTotal(minutes, discountedPrice) {
-      // Subtract 100 minutes, minimum zero
-      let adjustedMinutes = Math.max(0, minutes - 100);
-
-      // Determine price per minute based on tiers
-      let pricePerMinute = 0;
-      if (adjustedMinutes <= 800) { // 100 to 900 total
-        pricePerMinute = 39;
-      } else if (adjustedMinutes <= 4800) { // 1000 to 4900 total
-        pricePerMinute = 37;
-      } else if (adjustedMinutes <= 19800) { // 5000 to 19900 total
-        pricePerMinute = 35;
-      } else if (adjustedMinutes <= 49800) { // 20000 to 49900 total
-        pricePerMinute = 33;
-      } else { // 50000+ total
-        pricePerMinute = 30;
+      let totalPerRow = 0;
+      if (i === 3) {
+        const minutesVal = document.getElementById(`users3`).value;
+        totalPerRow = calculateMinutesTotal(minutesVal);
+      } else {
+        const usersVal = document.getElementById(`users${i}`).value;
+        const users = usersVal === '' ? 0 : parseInt(usersVal, 10);
+        totalPerRow = (discountedPrice !== '' && !isNaN(users)) ? +(discountedPrice * users).toFixed(2) : 0;
       }
+      document.getElementById(`totalRow${i}`).value = totalPerRow;
 
-      return +(adjustedMinutes * pricePerMinute).toFixed(2);
+      grandTotalSum += totalPerRow;
     }
-
-    function updateResults() {
-      let grandTotalSum = 0;
-      for(let i = 0; i <= 3; i++) {
-        let price, discount, discountedPrice;
-        if(i === 0) {
-          price = document.getElementById('price0').value;
-        } else if(i === 1) {
-          price = 60;
-        } else if(i === 2) {
-          price = 30;
-        } else {
-          price = 39;
-        }
-
-        discount = document.getElementById(`discount${i}`).value;
-        discountedPrice = calcDiscount(price, discount);
-        document.getElementById(`result${i}`).value = discountedPrice;
-
-        if(i !== 3) {
-          // For rows 0-2: total = discounted price * users
-          const usersVal = document.getElementById(`users${i}`).value;
-          const users = usersVal === '' ? 0 : parseInt(usersVal, 10);
-          const totalPerRow = (discountedPrice !== '' && !isNaN(users)) ? +(discountedPrice * users).toFixed(2) : '';
-          document.getElementById(`totalRow${i}`).value = totalPerRow;
-          grandTotalSum += (totalPerRow === '' ? 0 : totalPerRow);
-        } else {
-          // Row 3: use special minutes logic
-          const minutesVal = document.getElementById('minutes3').value;
-          const minutes = minutesVal === '' ? 0 : parseInt(minutesVal, 10);
-
-          // total based on minutes tiers ignoring discounted price
-          // Per your instructions, total uses tier prices * (minutes-100),
-          // NOT discountedPrice * minutes, so we ignore discountedPrice here.
-          const totalPerRow = calcMinutesTotal(minutes, discountedPrice);
-          document.getElementById('totalRow3').value = totalPerRow;
-          grandTotalSum += totalPerRow;
-        }
-      }
-
-      document.getElementById('grandTotal').value = grandTotalSum.toFixed(2);
-    }
-
-    // Add event listeners
-    ['price0', 'discount0', 'discount1', 'discount2', 'discount3', 
-     'users0', 'users1', 'users2', 'minutes3'].forEach(id => {
-      document.getElementById(id).addEventListener('input', updateResults);
-    });
-
-    updateResults();
-  </script>
-</body>
-</html>
+    document.getElementById('grandTotal').value = grandTotalSum.toFixed(2);
+    document.getElementById('discountedPriceTotal').value = discountedPriceSum.toFixed(2);
+  }
+</script>
